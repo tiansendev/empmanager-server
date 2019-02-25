@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alochol.empmanagerserver.mybatis.dao.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.alochol.empmanagerserver.mybatis.model.Employee">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="emp_name" jdbcType="VARCHAR" property="emp_name" />
+    <result column="emp_gender" jdbcType="TINYINT" property="emp_gender" />
+    <result column="emp_age" jdbcType="INTEGER" property="emp_age" />
+    <result column="emp_code" jdbcType="VARCHAR" property="emp_code" />
+    <result column="emp_salary" jdbcType="INTEGER" property="emp_salary" />
+    <result column="emp_remark" jdbcType="VARCHAR" property="emp_remark" />
+    <result column="create_id" jdbcType="VARCHAR" property="create_id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="create_date" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="update_date" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, emp_name, emp_gender, emp_age, emp_code, emp_salary, emp_remark, create_id, create_date, 
+    update_date
+  </sql>
+  <select id="selectByExample" parameterType="com.alochol.empmanagerserver.mybatis.model.EmployeeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tb_emp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_emp
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tb_emp
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.alochol.empmanagerserver.mybatis.model.EmployeeExample">
+    delete from tb_emp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.alochol.empmanagerserver.mybatis.model.Employee">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+      select  replace(uuid(),'-','')   from dual
+    </selectKey>
+    insert into tb_emp (id, emp_name, emp_gender, 
+      emp_age, emp_code, emp_salary, 
+      emp_remark, create_id, create_date, 
+      update_date)
+    values (#{id,jdbcType=VARCHAR}, #{emp_name,jdbcType=VARCHAR}, #{emp_gender,jdbcType=TINYINT}, 
+      #{emp_age,jdbcType=INTEGER}, #{emp_code,jdbcType=VARCHAR}, #{emp_salary,jdbcType=INTEGER}, 
+      #{emp_remark,jdbcType=VARCHAR}, #{create_id,jdbcType=VARCHAR}, #{create_date,jdbcType=TIMESTAMP}, 
+      #{update_date,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.alochol.empmanagerserver.mybatis.model.Employee">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+      select  replace(uuid(),'-','')   from dual
+    </selectKey>
+    insert into tb_emp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      id,
+      <if test="emp_name != null">
+        emp_name,
+      </if>
+      <if test="emp_gender != null">
+        emp_gender,
+      </if>
+      <if test="emp_age != null">
+        emp_age,
+      </if>
+      <if test="emp_code != null">
+        emp_code,
+      </if>
+      <if test="emp_salary != null">
+        emp_salary,
+      </if>
+      <if test="emp_remark != null">
+        emp_remark,
+      </if>
+      <if test="create_id != null">
+        create_id,
+      </if>
+      <if test="create_date != null">
+        create_date,
+      </if>
+      <if test="update_date != null">
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{id,jdbcType=VARCHAR},
+      <if test="emp_name != null">
+        #{emp_name,jdbcType=VARCHAR},
+      </if>
+      <if test="emp_gender != null">
+        #{emp_gender,jdbcType=TINYINT},
+      </if>
+      <if test="emp_age != null">
+        #{emp_age,jdbcType=INTEGER},
+      </if>
+      <if test="emp_code != null">
+        #{emp_code,jdbcType=VARCHAR},
+      </if>
+      <if test="emp_salary != null">
+        #{emp_salary,jdbcType=INTEGER},
+      </if>
+      <if test="emp_remark != null">
+        #{emp_remark,jdbcType=VARCHAR},
+      </if>
+      <if test="create_id != null">
+        #{create_id,jdbcType=VARCHAR},
+      </if>
+      <if test="create_date != null">
+        #{create_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="update_date != null">
+        #{update_date,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.alochol.empmanagerserver.mybatis.model.EmployeeExample" resultType="java.lang.Long">
+    select count(*) from tb_emp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update tb_emp
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.emp_name != null">
+        emp_name = #{record.emp_name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.emp_gender != null">
+        emp_gender = #{record.emp_gender,jdbcType=TINYINT},
+      </if>
+      <if test="record.emp_age != null">
+        emp_age = #{record.emp_age,jdbcType=INTEGER},
+      </if>
+      <if test="record.emp_code != null">
+        emp_code = #{record.emp_code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.emp_salary != null">
+        emp_salary = #{record.emp_salary,jdbcType=INTEGER},
+      </if>
+      <if test="record.emp_remark != null">
+        emp_remark = #{record.emp_remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.create_id != null">
+        create_id = #{record.create_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.create_date != null">
+        create_date = #{record.create_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.update_date != null">
+        update_date = #{record.update_date,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update tb_emp
+    set id = #{record.id,jdbcType=VARCHAR},
+      emp_name = #{record.emp_name,jdbcType=VARCHAR},
+      emp_gender = #{record.emp_gender,jdbcType=TINYINT},
+      emp_age = #{record.emp_age,jdbcType=INTEGER},
+      emp_code = #{record.emp_code,jdbcType=VARCHAR},
+      emp_salary = #{record.emp_salary,jdbcType=INTEGER},
+      emp_remark = #{record.emp_remark,jdbcType=VARCHAR},
+      create_id = #{record.create_id,jdbcType=VARCHAR},
+      create_date = #{record.create_date,jdbcType=TIMESTAMP},
+      update_date = #{record.update_date,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.alochol.empmanagerserver.mybatis.model.Employee">
+    update tb_emp
+    <set>
+      <if test="emp_name != null">
+        emp_name = #{emp_name,jdbcType=VARCHAR},
+      </if>
+      <if test="emp_gender != null">
+        emp_gender = #{emp_gender,jdbcType=TINYINT},
+      </if>
+      <if test="emp_age != null">
+        emp_age = #{emp_age,jdbcType=INTEGER},
+      </if>
+      <if test="emp_code != null">
+        emp_code = #{emp_code,jdbcType=VARCHAR},
+      </if>
+      <if test="emp_salary != null">
+        emp_salary = #{emp_salary,jdbcType=INTEGER},
+      </if>
+      <if test="emp_remark != null">
+        emp_remark = #{emp_remark,jdbcType=VARCHAR},
+      </if>
+      <if test="create_id != null">
+        create_id = #{create_id,jdbcType=VARCHAR},
+      </if>
+      <if test="create_date != null">
+        create_date = #{create_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="update_date != null">
+        update_date = #{update_date,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.alochol.empmanagerserver.mybatis.model.Employee">
+    update tb_emp
+    set emp_name = #{emp_name,jdbcType=VARCHAR},
+      emp_gender = #{emp_gender,jdbcType=TINYINT},
+      emp_age = #{emp_age,jdbcType=INTEGER},
+      emp_code = #{emp_code,jdbcType=VARCHAR},
+      emp_salary = #{emp_salary,jdbcType=INTEGER},
+      emp_remark = #{emp_remark,jdbcType=VARCHAR},
+      create_id = #{create_id,jdbcType=VARCHAR},
+      create_date = #{create_date,jdbcType=TIMESTAMP},
+      update_date = #{update_date,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

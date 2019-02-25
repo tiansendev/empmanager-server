@@ -1,0 +1,20 @@
+server:
+  port: 8090
+spring:
+  profiles:
+    active: dev
+  datasource:
+    name: empmanager
+    url: jdbc:mysql://127.0.0.1:3306/empmanager?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:mybatis/*Mapper.xml
+#pagehelper:
+#  helperDialect: mysql
+#  support-methods-arguments: true
+#  params:
+#    count: true
+#    pageNum: 0
+#    pageSize: 10
