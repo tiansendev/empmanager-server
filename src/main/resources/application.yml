@@ -11,10 +11,3 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
 mybatis:
   mapper-locations: classpath:mybatis/*Mapper.xml
-#pagehelper:
-#  helperDialect: mysql
-#  support-methods-arguments: true
-#  params:
-#    count: true
-#    pageNum: 0
-#    pageSize: 10
