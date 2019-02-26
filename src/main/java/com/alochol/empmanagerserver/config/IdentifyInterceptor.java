@@ -41,7 +41,8 @@ public class IdentifyInterceptor extends HandlerInterceptorAdapter {
 			}
 			Manager manager=cacheService.get(token,Manager.class);
 			if(null==manager) {
-				writeResponse(ServiceResult.failure(ServiceResultCode.PERMISSION_NO_ENOUGH), response);
+				// token 过期
+				writeResponse(ServiceResult.failure(ServiceResultCode.TOKEN_EXPIRE), response);
 				return false;
 			}
 			UserRole[] roles = annotation.role();

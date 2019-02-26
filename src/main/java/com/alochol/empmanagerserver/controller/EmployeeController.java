@@ -79,9 +79,10 @@ public class EmployeeController {
                                       @RequestParam(value = "ageStart", required = false) Integer ageStart,
                                       @RequestParam(value = "ageEnd", required = false) Integer ageEnd,
                                       @RequestParam(value = "gender", required = false) Integer gender,
+                                      @RequestParam(value = "creatorId", required = false) String creatorId,
                                       @PageableDefault(size = 10, sort = {"emp_name"}, direction = Sort.Direction.ASC) Pageable pageable
-                                      ) {
-        PageInfo Employees = employeeService.selectByPage(mgrName, ageStart, ageEnd, gender, pageable);
+    ) {
+        PageInfo Employees = employeeService.selectByPage(mgrName, ageStart, ageEnd, gender, creatorId, pageable);
         return ServiceResult.success(Employees);
     }
 
@@ -93,11 +94,12 @@ public class EmployeeController {
     @PermissionRequired
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ServiceResult selecAll(@RequestParam(value = "mgrName", required = false) String mgrName,
-                                      @RequestParam(value = "ageStart", required = false) Integer ageStart,
-                                      @RequestParam(value = "ageEnd", required = false) Integer ageEnd,
-                                      @RequestParam(value = "gender", required = false) Integer gender
-                                      ) {
-        List<Employee> Employees = employeeService.selectAll(mgrName, ageStart, ageEnd, gender);
+                                  @RequestParam(value = "ageStart", required = false) Integer ageStart,
+                                  @RequestParam(value = "ageEnd", required = false) Integer ageEnd,
+                                  @RequestParam(value = "gender", required = false) Integer gender,
+                                  @RequestParam(value = "creatorId", required = false) String creatorId
+    ) {
+        List<Employee> Employees = employeeService.selectAll(mgrName, ageStart, ageEnd, gender, creatorId);
         return ServiceResult.success(Employees);
     }
 

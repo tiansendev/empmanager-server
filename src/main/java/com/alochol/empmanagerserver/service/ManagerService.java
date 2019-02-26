@@ -1,6 +1,7 @@
 package com.alochol.empmanagerserver.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alochol.empmanagerserver.config.UserContextThreadLocal;
 import com.alochol.empmanagerserver.config.auth.UserRole;
 import com.alochol.empmanagerserver.config.cache.CacheService;
 import com.alochol.empmanagerserver.constant.http.code.ServiceResultCode;
@@ -44,6 +45,7 @@ public class ManagerService {
         }
         manager.setCreate_date(RylaiDate.getCurrentDate());
         manager.setUpdate_date(RylaiDate.getCurrentDate());
+        manager.setCreate_id(UserContextThreadLocal.getCacheUsermanager().getCreate_id());
         managerMapper.insert(manager);
         return manager;
     }
@@ -55,7 +57,7 @@ public class ManagerService {
         ManagerExample managerExample = new ManagerExample();
         managerExample.createCriteria().andIdEqualTo(manager.getId());
         manager.setUpdate_date(RylaiDate.getCurrentDate());
-        managerMapper.updateByPrimaryKey(manager);
+        managerMapper.updateByPrimaryKeySelective(manager);
         return manager;
     }
 
@@ -166,14 +168,15 @@ public class ManagerService {
         if (null == reqManager || StringUtils.isAnyBlank(reqManager.getMgr_name(), reqManager.getMgr_password())) {
             throw new ParameterIllegalException("用户名密码不能为空");
         }
-        if (reqManager.getRole_id() != UserRole.COMMON_MANAGER.getRoleId() && reqManager.getRole_id() != UserRole.SYSTEM_MANAGER.getRoleId()) {
+        if (reqManager.getRole_id() != null
+                &&reqManager.getRole_id() != UserRole.COMMON_MANAGER.getRoleId() && reqManager.getRole_id() != UserRole.SYSTEM_MANAGER.getRoleId()) {
             throw new ParameterIllegalException("用户角色不合法");
         }
         // 判断用户是否存在
         ManagerExample managerExampleExist = new ManagerExample();
         managerExampleExist.createCriteria().andMgr_nameEqualTo(reqManager.getMgr_name());
         List<Manager> managers = managerMapper.selectByExample(managerExampleExist);
-        if (managers == null || managers.size() == 0) {
+        if (managers != null && managers.size() > 0) {
             throw new BusinessException(ServiceResultCode.USER_HAD_EXIST);
         }
 

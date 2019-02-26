@@ -1,5 +1,6 @@
 package com.alochol.empmanagerserver.service;
 
+import com.alochol.empmanagerserver.config.UserContextThreadLocal;
 import com.alochol.empmanagerserver.exception.ParameterIllegalException;
 import com.alochol.empmanagerserver.mybatis.dao.EmployeeMapper;
 import com.alochol.empmanagerserver.mybatis.model.Employee;
@@ -34,6 +35,7 @@ public class EmployeeService {
         }
         employee.setCreate_date(RylaiDate.getCurrentDate());
         employee.setUpdate_date(RylaiDate.getCurrentDate());
+        employee.setCreate_id(UserContextThreadLocal.getCacheUsermanager().getCreate_id());
         employeeMapper.insert(employee);
         return employee;
     }
@@ -45,7 +47,7 @@ public class EmployeeService {
         EmployeeExample employeeExample = new EmployeeExample();
         employeeExample.createCriteria().andIdEqualTo(employee.getId());
         employee.setUpdate_date(RylaiDate.getCurrentDate());
-        employeeMapper.updateByPrimaryKey(employee);
+        employeeMapper.updateByPrimaryKeySelective(employee);
         return employee;
     }
 
@@ -66,8 +68,8 @@ public class EmployeeService {
         employeeMapper.deleteByExample(employeeExample);
     }
 
-    public PageInfo selectByPage(String empName, Integer ageStart, Integer ageEnd, Integer gender, Pageable pageable) {
-        EmployeeExample employeeExample = getManagerExample(empName, ageStart, ageEnd, gender);
+    public PageInfo selectByPage(String empName, Integer ageStart, Integer ageEnd, Integer gender, String creatorId, Pageable pageable) {
+        EmployeeExample employeeExample = getManagerExample(empName, ageStart, ageEnd, gender, creatorId);
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSort().toString().replace(":", " "));
         List<Employee> employeesrs = employeeMapper.selectByExample(employeeExample);
@@ -75,8 +77,8 @@ public class EmployeeService {
         return pageInfo;
     }
 
-    public List<Employee> selectAll(String empName, Integer ageStart, Integer ageEnd, Integer gender) {
-        EmployeeExample employeeExample = getManagerExample(empName, ageStart, ageEnd, gender);
+    public List<Employee> selectAll(String empName, Integer ageStart, Integer ageEnd, Integer gender, String creatorId) {
+        EmployeeExample employeeExample = getManagerExample(empName, ageStart, ageEnd, gender, creatorId);
         List<Employee> employeesrs = employeeMapper.selectByExample(employeeExample);
         return employeesrs;
     }
@@ -87,9 +89,10 @@ public class EmployeeService {
      * @param ageStart
      * @param ageEnd
      * @param gender
+     * @param creatorId
      * @return
      */
-    private EmployeeExample getManagerExample(String empName, Integer ageStart, Integer ageEnd, Integer gender) {
+    private EmployeeExample getManagerExample(String empName, Integer ageStart, Integer ageEnd, Integer gender, String creatorId) {
         EmployeeExample employeeExample = new EmployeeExample();
         EmployeeExample.Criteria criteria = employeeExample.createCriteria();
         if (StringUtils.isNotBlank(empName))
@@ -100,6 +103,8 @@ public class EmployeeService {
             criteria.andEmp_ageLessThanOrEqualTo(ageEnd);
         if (gender != null && gender < 2) // 合法的gender 只有 0 和 1
             criteria.andEmp_genderEqualTo(gender.byteValue());
+        if (StringUtils.isNotBlank(creatorId))
+            criteria.andCreate_idEqualTo(creatorId);
         return employeeExample;
     }
 

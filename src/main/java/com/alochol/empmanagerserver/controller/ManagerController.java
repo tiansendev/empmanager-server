@@ -131,7 +131,7 @@ public class ManagerController {
      * 注册
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ServiceResult register(@RequestBody Manager manager) {
         return ServiceResult.success(managerService.register(manager));
     }
