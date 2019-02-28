@@ -39,7 +39,7 @@ public class ManagerController {
      * @param manager
      * @return
      */
-    @PermissionRequired(role = UserRole.SYSTEM_MANAGER)
+    @PermissionRequired
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public ServiceResult updateManager(@RequestBody Manager manager) {
         return ServiceResult.success(managerService.updateManager(manager));
@@ -110,7 +110,7 @@ public class ManagerController {
      * 只有管理员有权限
      * @return
      */
-    @PermissionRequired(role = UserRole.SYSTEM_MANAGER)
+    @PermissionRequired
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ServiceResult selecById(@PathVariable("id") String id) {
         Manager manager = managerService.selectById(id);

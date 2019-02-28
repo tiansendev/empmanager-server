@@ -54,6 +54,13 @@ public class ManagerService {
         if (manager == null || StringUtils.isAnyBlank(manager.getId(), manager.getMgr_name())) {
             throw new ParameterIllegalException("用户名或用户id不能为空");
         }
+        Manager cacheUsermanager = UserContextThreadLocal.getCacheUsermanager();
+        // 如果是普通用户 则只能修改自己的信息
+        if (Integer.valueOf(cacheUsermanager.getRole_id()) == UserRole.COMMON_MANAGER.getRoleId()
+                && !manager.getId().equals(cacheUsermanager.getId())) {
+            throw new BusinessException(ServiceResultCode.PERMISSION_NO_ENOUGH);
+        }
+
         ManagerExample managerExample = new ManagerExample();
         managerExample.createCriteria().andIdEqualTo(manager.getId());
         manager.setUpdate_date(RylaiDate.getCurrentDate());
@@ -123,9 +130,17 @@ public class ManagerService {
     }
 
     public Manager selectById(String id) {
+
         if (StringUtils.isBlank(id)) {
             throw new ParameterIllegalException();
         }
+        Manager cacheUsermanager = UserContextThreadLocal.getCacheUsermanager();
+        // 如果是普通用户 则只能查看自己的信息
+        if (Integer.valueOf(cacheUsermanager.getRole_id()) == UserRole.COMMON_MANAGER.getRoleId()
+                && !id.equals(cacheUsermanager.getId())) {
+            throw new BusinessException(ServiceResultCode.PERMISSION_NO_ENOUGH);
+        }
+
         return managerMapper.selectByPrimaryKey(id);
     }
 
@@ -141,7 +156,7 @@ public class ManagerService {
         managerExampleExist.createCriteria().andMgr_nameEqualTo(manager.getMgr_name());
         List<Manager> managers = managerMapper.selectByExample(managerExampleExist);
         if (managers == null || managers.size() == 0) {
-            throw new BusinessException(ServiceResultCode.USER_HAD_EXIST);
+            throw new BusinessException(ServiceResultCode.USER_UNEXIST);
         }
 
         Manager mgr = managers.get(0);
